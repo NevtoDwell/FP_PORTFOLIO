@@ -10,10 +10,11 @@
 <body>
 
     <div id="preloader">
-        <div class="loader-content">
-            <img src="logo.jpg" alt="Logo" class="loader-logo">
-            <div class="loader-circle"></div>
-            <div id="loader-percent">0%</div>
+        <div class="loader-container">
+            <div id="load" data-percent="0%">
+                <span></span>
+                <img src="logo.jpg" alt="Logo" class="inner-logo">
+            </div>
         </div>
     </div>
 
@@ -21,85 +22,74 @@
         <nav>
             <div class="logo">PORTFOLIO</div>
             <ul>
-                <li><a href="#projects">Работы</a> </li>
-                <li><a href="#about">Обо мне</a> </li>
-                <li><a href="#contact">Контакты</a> </li>
+                <li><a href="#projects">Работы</a></li>
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#contact">Контакты</a></li>
             </ul>
         </nav>
     </header>
 
     <section class="hero">
-        <h1>Твое Имя / Псевдоним</h1> 
-        <p>Digital Artist | Music Producer | 3D Modeler</p> 
+        <h1>Твое Имя / Псевдоним</h1>
+        <p>Digital Artist | Music Producer | 3D Modeler</p>
     </section>
 
     <section id="projects" class="container">
-        <h2 class="section-title">Мои проекты</h2> 
+        <h2 class="section-title">Мои проекты</h2>
         <div class="grid">
             <div class="card">
-                <div class="card-image" style="background-color: #333;"></div> 
+                <div class="card-image" style="background-color: #333;"></div>
                 <div class="card-content">
-                    <h3>Adobe Illustrator Art</h3> 
-                    <p>Векторные иллюстрации и дизайн персонажей.</p> 
+                    <h3>Adobe Illustrator Art</h3>
+                    <p>Векторные иллюстрации и дизайн персонажей.</p>
                 </div>
             </div>
             <div class="card">
-                <div class="card-image" style="background-color: #444;"></div> 
+                <div class="card-image" style="background-color: #444;"></div>
                 <div class="card-content">
-                    <h3>Lo-fi & Phonk Beats</h3> 
-                    <p>Коллекция AI-сгенерированных треков с авторской обработкой.</p> 
+                    <h3>Lo-fi & Phonk Beats</h3>
+                    <p>Коллекция AI-сгенерированных треков с авторской обработкой.</p>
                 </div>
             </div>
             <div class="card">
-                <div class="card-image" style="background-color: #555;"></div> 
+                <div class="card-image" style="background-color: #555;"></div>
                 <div class="card-content">
-                    <h3>Blender 3D Models</h3> 
-                    <p>Рендеры и моделирование объектов.</p> 
+                    <h3>Blender 3D Models</h3>
+                    <p>Рендеры и моделирование объектов.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <footer id="contact">
-        <p>© 2026 Твое Имя. Сделано для GitHub Pages.</p> 
+        <p>© 2026 Твое Имя. Сделано для GitHub Pages.</p>
         <div class="socials">
-            <a href="#">Telegram</a> 
-            <a href="#">ArtStation</a> 
-            <a href="#">GitHub</a> 
+            <a href="#">Telegram</a>
+            <a href="#">ArtStation</a>
+            <a href="#">GitHub</a>
         </div>
     </footer>
 
     <script>
         window.addEventListener('load', function() {
-            const percentDisplay = document.getElementById('loader-percent');
-            const preloader = document.getElementById('preloader');
-            let count = 0;
-            
-            // Функция для имитации медленной загрузки
-            function updateLoader() {
-                // Случайная прибавка от 1 до 3 процентов для медленного эффекта
-                count += Math.floor(Math.random() * 3) + 1;
-                
-                if (count > 100) count = 100;
-                
-                percentDisplay.innerText = count + '%';
-                
-                if (count < 100) {
-                    // Случайная задержка между шагами (от 50 до 150 мс)
-                    let nextStep = Math.floor(Math.random() * 100) + 50;
-                    setTimeout(updateLoader, nextStep);
+            const loader = document.getElementById("load");
+            const preloader = document.getElementById("preloader");
+            let i = 0;
+
+            const interval = setInterval(function () {
+                if (i <= 360) {
+                    loader.style.background = `conic-gradient(var(--main-color) ${i}deg, #0000 0deg)`;
+                    loader.querySelector('span').style.transform = `rotate(${i}deg)`;
+                    loader.setAttribute('data-percent', Math.round(i / 3.6) + '%');
+                    i += 1.5; // Скорость (чем меньше число, тем медленнее)
                 } else {
-                    // Когда дошло до 100, ждем полсекунды и скрываем
+                    clearInterval(interval);
                     setTimeout(() => {
                         preloader.classList.add('preloader-hidden');
-                    }, 600);
+                    }, 500);
                 }
-            }
-            
-            // Запускаем процесс
-            updateLoader();
+            }, 30); 
         });
     </script>
-
 </body>
 </html>
