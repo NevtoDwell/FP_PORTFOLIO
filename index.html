@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <div id="preloader">
+        <div class="loader-content">
+            <img src="15tvv3i787oask2wu0fd.jpg" alt="Logo" class="loader-logo">
+            <div class="loader-circle"></div>
+            <div id="loader-percent">0%</div>
+        </div>
+    </div>
+
     <header>
         <nav>
             <div class="logo">PORTFOLIO</div>
@@ -53,13 +61,36 @@
     </section>
 
     <footer id="contact">
-        <p>© 2026 Твое Имя. Сделано для GitHub Pages.</p>
+        <p>© 2026 Твоё Имя. Сделано для GitHub Pages.</p>
         <div class="socials">
             <a href="#">Telegram</a>
             <a href="#">ArtStation</a>
             <a href="#">GitHub</a>
         </div>
     </footer>
+
+    <script>
+        window.addEventListener('load', function() {
+            const percentDisplay = document.getElementById('loader-percent');
+            const preloader = document.getElementById('preloader');
+            let count = 0;
+            
+            const interval = setInterval(() => {
+                count += Math.floor(Math.random() * 15) + 1;
+                
+                if (count >= 100) {
+                    count = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        preloader.classList.add('preloader-hidden');
+                    }, 500);
+                }
+                
+                percentDisplay.innerText = count + '%';
+            }, 60);
+        });
+    </script>
 
 </body>
 </html>
