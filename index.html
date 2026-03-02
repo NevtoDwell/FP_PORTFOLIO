@@ -4,91 +4,255 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio | My Creative Space</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <style>
+        /* 1. ПОДКЛЮЧЕНИЕ ВАРИАТИВНОГО ШРИФТА */
+        @font-face {
+            font-family: 'ScienceGothic';
+            src: url('fonts/science-gothic.ttf') format('truetype-variations'),
+                 url('fonts/science-gothic.ttf') format('truetype');
+            font-weight: 100 900;
+            font-stretch: 50% 200%;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: rgba(26, 26, 26, 0.8);
+            --text-color: #ffffff;
+            --accent-color: #ad50c6;
+            --main-color: #ad50c6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'ScienceGothic', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* Контейнер для 3D графики */
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1; /* Слой для 3D */
+        }
+
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        #load {
+            width: 205px; height: 205px;
+            border-radius: 50%;
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            background: conic-gradient(var(--main-color) 0deg, #222 0deg);
+            filter: drop-shadow(0 0 20px #000000);
+        }
+
+        #load::after {
+            content: attr(data-percent);
+            position: absolute;
+            color: var(--main-color);
+            font-size: 24px;
+            font-variation-settings: "wght" 700, "wdth" 110;
+            bottom: -50px; left: 50%;
+            transform: translateX(-50%);
+            letter-spacing: 3px;
+        }
+
+        .inner-logo {
+            position: absolute;
+            width: 195px; height: 195px;
+            border-radius: 50%;
+            object-fit: cover;
+            z-index: 3;
+            border: 5px solid var(--bg-color); 
+            background-color: var(--bg-color);
+        }
+
+        .preloader-hidden { opacity: 0; visibility: hidden; }
+
+        /* --- CONTENT STYLES --- */
+        /* Делаем обертки прозрачными для кликов, чтобы можно было крутить 3D */
+        header, .hero, .container { 
+            position: relative; 
+            z-index: 2; 
+            pointer-events: none; 
+        }
+
+        /* Кнопки и карточки снова делаем активными */
+        .card, h1, p { pointer-events: auto; }
+
+        header { padding: 3rem 2rem; display: flex; justify-content: center; }
+        header h1 {
+            font-size: 1.5rem; letter-spacing: 10px;
+            font-variation-settings: "wght" 200, "wdth" 150;
+            text-transform: uppercase;
+        }
+
+        .hero { text-align: left; padding: 100px 10%; }
+        .hero h1 { 
+            font-size: clamp(3rem, 10vw, 5rem); 
+            font-variation-settings: "wght" 900, "wdth" 140;
+            text-transform: uppercase;
+        }
+
+        .hero p {
+            color: var(--accent-color);
+            font-size: 1.2rem; letter-spacing: 4px;
+            font-variation-settings: "wght" 400, "wdth" 100;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 60px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { 
+            background: var(--card-bg); 
+            height: 280px; border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
 </head>
 <body>
 
     <div id="preloader">
-        <div class="loader-container">
-            <div id="load" data-percent="0%">
-                <span></span>
-                <img src="logo.jpg" alt="Logo" class="inner-logo">
-            </div>
+        <div id="load" data-percent="0">
+            <img src="logo.jpg" alt="Logo" class="inner-logo">
         </div>
     </div>
 
+    <div id="canvas-container"></div>
+
     <header>
-        <nav>
-            <div class="logo">PORTFOLIO</div>
-            <ul>
-                <li><a href="#projects">Работы</a></li>
-                <li><a href="#about">Обо мне</a></li>
-                <li><a href="#contact">Контакты</a></li>
-            </ul>
-        </nav>
+        <h1>PORTFOLIO</h1>
     </header>
 
     <section class="hero">
-        <h1>Твое Имя / Псевдоним</h1>
-        <p>Digital Artist | Music Producer | 3D Modeler</p>
+        <h1>Твое Имя</h1>
+        <p>DIGITAL ARTIST | 3D MODELER</p>
     </section>
 
-    <section id="projects" class="container">
-        <h2 class="section-title">Мои проекты</h2>
+    <div class="container">
         <div class="grid">
-            <div class="card">
-                <div class="card-image" style="background-color: #333;"></div>
-                <div class="card-content">
-                    <h3>Adobe Illustrator Art</h3>
-                    <p>Векторные иллюстрации и дизайн персонажей.</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-image" style="background-color: #444;"></div>
-                <div class="card-content">
-                    <h3>Lo-fi & Phonk Beats</h3>
-                    <p>Коллекция AI-сгенерированных треков с авторской обработкой.</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-image" style="background-color: #555;"></div>
-                <div class="card-content">
-                    <h3>Blender 3D Models</h3>
-                    <p>Рендеры и моделирование объектов.</p>
-                </div>
-            </div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
         </div>
-    </section>
-
-    <footer id="contact">
-        <p>© 2026 Твое Имя. Сделано для GitHub Pages.</p>
-        <div class="socials">
-            <a href="#">Telegram</a>
-            <a href="#">ArtStation</a>
-            <a href="#">GitHub</a>
-        </div>
-    </footer>
+    </div>
 
     <script>
+        // --- 3D ЛОГИКА ---
+        let scene, camera, renderer, model;
+        let isMouseDown = false;
+
+        function init3D() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Свет
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // Статичная сетка на полу
+            const grid = new THREE.GridHelper(20, 40, 0xad50c6, 0x222222);
+            grid.position.y = -2;
+            scene.add(grid);
+
+            // Загрузка персонажа
+            const loader = new THREE.GLTFLoader();
+            loader.load('character.glb', function(gltf) {
+                model = gltf.scene;
+                model.position.y = -2;
+                
+                model.traverse((node) => {
+                    if (node.isMesh) {
+                        node.material.wireframe = true;
+                        node.material.color.setHex(0xffffff);
+                    }
+                });
+                scene.add(model);
+            });
+
+            // --- УПРАВЛЕНИЕ МЫШЬЮ (ТОЛЬКО ВОКРУГ СЕБЯ) ---
+            document.addEventListener('mousedown', () => { isMouseDown = true; });
+            document.addEventListener('mouseup', () => { isMouseDown = false; });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isMouseDown && model) {
+                    // Вращаем только по горизонтали (ось Y)
+                    model.rotation.y += e.movementX * 0.01;
+                }
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                if (model) {
+                    // Если мышь отпущена — авто-вращение
+                    if (!isMouseDown) {
+                        model.rotation.y += 0.005;
+                    }
+                    // Всегда держим персонажа ровно (без наклонов)
+                    model.rotation.x = 0;
+                    model.rotation.z = 0;
+                }
+
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        init3D();
+
+        // --- ЛОГИКА ПРЕЛОАДЕРА ---
         window.addEventListener('load', function() {
-            const loader = document.getElementById("load");
+            const loaderElement = document.getElementById("load");
             const preloader = document.getElementById("preloader");
             let i = 0;
 
             const interval = setInterval(function () {
                 if (i <= 360) {
-                    loader.style.background = `conic-gradient(var(--main-color) ${i}deg, #0000 0deg)`;
-                    loader.querySelector('span').style.transform = `rotate(${i}deg)`;
-                    loader.setAttribute('data-percent', Math.round(i / 3.6) + '%');
-                    i += 1.5; // Скорость (чем меньше число, тем медленнее)
+                    loaderElement.style.background = `conic-gradient(var(--main-color) ${i}deg, #222 0deg)`;
+                    loaderElement.setAttribute('data-percent', Math.round(i / 3.6));
+                    i += 5; 
                 } else {
                     clearInterval(interval);
                     setTimeout(() => {
                         preloader.classList.add('preloader-hidden');
-                    }, 500);
+                    }, 300);
                 }
-            }, 30); 
+            }, 16);
+        });
+
+        // Адаптация при изменении размера окна
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
