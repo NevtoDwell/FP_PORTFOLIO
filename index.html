@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <style>
-        /* 1. ПОДКЛЮЧЕНИЕ ВАРИАТИВНОГО ШРИФТА */
+        /* ПОДКЛЮЧЕНИЕ ВАРИАТИВНОГО ШРИФТА */
         @font-face {
             font-family: 'ScienceGothic';
             src: url('fonts/science-gothic.ttf') format('truetype-variations'),
@@ -82,33 +82,37 @@
             border-radius: 50%;
             object-fit: cover;
             z-index: 3;
-            border: 5px solid var(--bg-color); 
+            border: 5px solid var(--bg-color);
             background-color: var(--bg-color);
         }
 
         .preloader-hidden { opacity: 0; visibility: hidden; }
 
         /* --- CONTENT STYLES --- */
-        /* Делаем обертки прозрачными для кликов, чтобы можно было крутить 3D */
-        header, .hero, .container { 
-            position: relative; 
-            z-index: 2; 
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
             pointer-events: none; 
+            width: 50%; 
+            margin-left: auto; 
+            padding-right: 5%; 
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
         }
 
-        /* Кнопки и карточки снова делаем активными */
         .card, h1, p { pointer-events: auto; }
 
-        header { padding: 3rem 2rem; display: flex; justify-content: center; }
+        header { padding: 3rem 0; display: flex; justify-content: flex-end; width: 100%; }
         header h1 {
             font-size: 1.5rem; letter-spacing: 10px;
             font-variation-settings: "wght" 200, "wdth" 150;
             text-transform: uppercase;
         }
 
-        .hero { text-align: left; padding: 100px 10%; }
-        .hero h1 { 
-            font-size: clamp(3rem, 10vw, 5rem); 
+        .hero { text-align: right; padding: 100px 0; width: 100%; }
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 5rem);
             font-variation-settings: "wght" 900, "wdth" 140;
             text-transform: uppercase;
         }
@@ -119,13 +123,23 @@
             font-variation-settings: "wght" 400, "wdth" 100;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 60px 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .card { 
-            background: var(--card-bg); 
-            height: 280px; border-radius: 20px; 
+        .container { width: 100%; padding: 60px 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .card {
+            background: var(--card-bg);
+            height: 280px; border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                width: 100%;
+                padding: 0 5%;
+                align-items: center;
+                background: rgba(15, 15, 15, 0.7); 
+            }
+            .hero, header { text-align: center; justify-content: center; }
         }
     </style>
 </head>
@@ -139,20 +153,22 @@
 
     <div id="canvas-container"></div>
 
-    <header>
-        <h1>PORTFOLIO</h1>
-    </header>
+    <div class="content-wrapper">
+        <header>
+            <h1>PORTFOLIO</h1>
+        </header>
 
-    <section class="hero">
-        <h1>Твое Имя</h1>
-        <p>DIGITAL ARTIST | 3D MODELER</p>
-    </section>
+        <section class="hero">
+            <h1>Твое Имя</h1>
+            <p>DIGITAL ARTIST | 3D MODELER</p>
+        </section>
 
-    <div class="container">
-        <div class="grid">
-            <div class="card"></div>
-            <div class="card"></div>
-            <div class="card"></div>
+        <div class="container">
+            <div class="grid">
+                <div class="card"></div>
+                <div class="card"></div>
+                <div class="card"></div>
+            </div>
         </div>
     </div>
 
@@ -180,14 +196,21 @@
             // Статичная сетка на полу
             const grid = new THREE.GridHelper(20, 40, 0xad50c6, 0x222222);
             grid.position.y = -2;
+            grid.position.x = -4.5; 
             scene.add(grid);
 
             // Загрузка персонажа
             const loader = new THREE.GLTFLoader();
             loader.load('character.glb', function(gltf) {
                 model = gltf.scene;
-                model.position.y = -2;
                 
+                model.position.y = -2; 
+                model.position.x = -4.5; 
+                
+                // === ДЕЛАЕМ ПЕРСОНАЖА ЕЩЕ КРУПНЕЕ (увеличили с 1.5 до 3.5) ===
+                model.scale.set(3.5, 3.5, 3.5); 
+                // ============================================================
+
                 model.traverse((node) => {
                     if (node.isMesh) {
                         node.material.wireframe = true;
@@ -197,13 +220,12 @@
                 scene.add(model);
             });
 
-            // --- УПРАВЛЕНИЕ МЫШЬЮ (ТОЛЬКО ВОКРУГ СЕБЯ) ---
+            // Управление мышью 
             document.addEventListener('mousedown', () => { isMouseDown = true; });
             document.addEventListener('mouseup', () => { isMouseDown = false; });
             
             document.addEventListener('mousemove', (e) => {
                 if (isMouseDown && model) {
-                    // Вращаем только по горизонтали (ось Y)
                     model.rotation.y += e.movementX * 0.01;
                 }
             });
@@ -212,11 +234,9 @@
                 requestAnimationFrame(animate);
 
                 if (model) {
-                    // Если мышь отпущена — авто-вращение
                     if (!isMouseDown) {
                         model.rotation.y += 0.005;
                     }
-                    // Всегда держим персонажа ровно (без наклонов)
                     model.rotation.x = 0;
                     model.rotation.z = 0;
                 }
@@ -228,7 +248,7 @@
 
         init3D();
 
-        // --- ЛОГИКА ПРЕЛОАДЕРА ---
+        // Логика прелоадера
         window.addEventListener('load', function() {
             const loaderElement = document.getElementById("load");
             const preloader = document.getElementById("preloader");
@@ -238,7 +258,7 @@
                 if (i <= 360) {
                     loaderElement.style.background = `conic-gradient(var(--main-color) ${i}deg, #222 0deg)`;
                     loaderElement.setAttribute('data-percent', Math.round(i / 3.6));
-                    i += 5; 
+                    i += 5;
                 } else {
                     clearInterval(interval);
                     setTimeout(() => {
