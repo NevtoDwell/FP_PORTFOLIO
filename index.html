@@ -162,9 +162,11 @@
             display: flex;
             align-items: center;
             border-radius: 6px;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
             color: var(--text-color);
             position: relative;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
         }
 
         .card:not(.active):not(.talk-cube):not(.work-card):hover {
@@ -190,6 +192,10 @@
             background: transparent !important;
             overflow: hidden;
             border-radius: 6px;
+            backdrop-filter: none !important;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
         }
 
         /* Рамка ПОВЕРХ картинки */
@@ -213,9 +219,9 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
+            backdrop-filter: none;
             z-index: 0;
-            transition: background 0.3s ease;
+            transition: background-color 0.3s ease;
         }
 
         .work-card:not(.is-expanded):hover .card-bg-clone {
@@ -330,24 +336,29 @@
         </div>
 
         <div class="right-col">
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover1.png" class="work-cover" alt="c1"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover2.png" class="work-cover" alt="c2"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover3.png" class="work-cover" alt="c3"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover4.png" class="work-cover" alt="c4"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover5.png" class="work-cover" alt="c5"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover6.png" class="work-cover" alt="c6"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover7.png" class="work-cover" alt="c7"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover8.png" class="work-cover" alt="c8"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover9.png" class="work-cover" alt="c9"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover10.png" class="work-cover" alt="c10"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover11.png" class="work-cover" alt="c10"><div class="card-bg-clone"></div></div>
-            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover12.png" class="work-cover" alt="c10"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover1.webp" class="work-cover" alt="c1" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover2.webp" class="work-cover" alt="c2" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover3.webp" class="work-cover" alt="c3" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover4.webp" class="work-cover" alt="c4" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover5.webp" class="work-cover" alt="c5" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover6.webp" class="work-cover" alt="c6" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover7.webp" class="work-cover" alt="c7" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover8.webp" class="work-cover" alt="c8" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover9.webp" class="work-cover" alt="c9" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover10.webp" class="work-cover" alt="c10" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover11.webp" class="work-cover" alt="c11" loading="lazy"><div class="card-bg-clone"></div></div>
+            <div class="card work-card" onclick="toggleCard(this)"><img src="img/cover12.webp" class="work-cover" alt="c12" loading="lazy"><div class="card-bg-clone"></div></div>
         </div>
     </div>
 
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
     <script>
-        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+        const lenis = new Lenis({ 
+            lerp: 0.1,
+            smooth: true,
+            wheelMultiplier: 1.1,
+            touchMultiplier: 1.2
+        });
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
